@@ -178,42 +178,6 @@ def create_bar_duplicated(selected_date):
     return fig
 
 
-def generate_map(selected_date):
-    # Filtra los datos para obtener la cobertura en la fecha seleccionada
-    cobertura_fecha_seleccionada = cobertura_fecha_especifica[cobertura_fecha_especifica['Date'] == selected_date]
-
-    # Crea el mapa de Folium
-    mapa = folium.Map(location=[cobertura_fecha_seleccionada['Latitud'].mean(), cobertura_fecha_seleccionada['Longitud'].mean()], zoom_start=10)
-
-    tiendas_por_nombre = cobertura_fecha_seleccionada.groupby('Desc. Store')
-
-    # Itera sobre cada grupo de tiendas
-    for nombre_tienda, tienda_grupo in tiendas_por_nombre:
-        icon_image = 'diseño_ara.png'
-
-        icon = folium.CustomIcon(
-            icon_image,
-            icon_size=(40, 55),
-            icon_anchor=(15, 30),
-            popup_anchor=(0, -60),
-        )
-        popup_html = f"{nombre_tienda} <br>"
-
-        # Itera sobre las filas del grupo de tiendas
-        for index, row in tienda_grupo.iterrows():
-            fecha = row['Date'].strftime('%Y-%m-%d')
-            cobertura = str(int(round(row['Coverage'],0))) + '%'
-            popup_html += f"<br> {fecha}: {cobertura} <br>"
-
-        # Obtiene la ubicación de la tienda
-        lat = tienda_grupo['Latitud'].iloc[0]
-        lon = tienda_grupo['Longitud'].iloc[0]
-
-        # Crea un marcador para la tienda con el contenido del popup
-        folium.Marker(location=[lat, lon], icon=icon, popup=folium.Popup(popup_html, max_width=300)).add_to(mapa)
-
-    return mapa
-
 
 app.layout = dbc.Container([
     navbar,
@@ -288,8 +252,6 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(dcc.Graph(id='bar-chart-7')),
     ]),
-    html.Br(),
-    html.Div(id='map-container')
 ], fluid=True)
 
 # Callback para actualizar los totales de Status ID, Invalid ID y No ID
@@ -381,15 +343,6 @@ def update_bar_chart_2(selected_date):
 def update_bar_chart_2(selected_date):
     return create_bar_duplicated(selected_date)
 
-@app.callback(
-    Output('map-container', 'children'),
-    [Input('date-picker', 'date')]
-)
-def update_map(selected_date):
-    mapa = generate_map(selected_date)
-    mapa.save('mapa.html')
-    mapa_html = html.Iframe(srcDoc=open('mapa.html', 'r').read(), width='100%', height='600px')
-    return mapa_html
 
 
 if __name__ == '__main__':
