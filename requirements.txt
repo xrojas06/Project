@@ -4,3 +4,5 @@ gunicorn
 folium
 plotly
 dash_bootstrap_components
+geopandas
+dash_leaflet
