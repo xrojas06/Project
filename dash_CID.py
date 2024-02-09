@@ -177,12 +177,84 @@ def create_bar_duplicated(selected_date):
     fig.update_traces(texttemplate='%{y}', textposition='auto')
     return fig
 
+def obtener_explicacion_grafica(id_grafica, selected_date):
+    # Aquí puedes poner la lógica para obtener el texto de explicación según el ID de la gráfica y la fecha seleccionada
+    if id_grafica == 'bar-chart' and selected_date == '2024-02-08':
+        return (
+                "Promedio de 27% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el"
+                + str(selected_date) + "." +
+                "Por otro lado hubo una disminución de 15 p.p. en el promedio de efectividad." +
+                "Y finalmente disminuyo 48 p.p. el promedio de cobertura para Bogotá - La Mariposa."
+        )
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-08':
+         return f"De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 53% de cobertura promedio efectiva"
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-08':
+        return f"Cúcuta no registró tickets con Customer ID en el POS 1."
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-08':
+        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-08':
+        return 'Hay persistencia de ID’s con longitudes atípicas. Siguen catalogándose como posibles errores de digitación'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-08':
+        return 'Los datos no válidos del 8 de febrero fueron el 1% del total de los tickets'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-08':
+        return 'El 08 de febrero únicamente las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
+    # Agrega más casos según sea necesario para otras gráficas
 
+# Paso 2: Actualizar el texto de explicación de cada gráfica según la fecha seleccionada
+@app.callback(
+    Output('explicacion-bar-chart', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart(selected_date):
+    return obtener_explicacion_grafica('bar-chart', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-2', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_2(selected_date):
+    return obtener_explicacion_grafica('bar-chart-2', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-3', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_3(selected_date):
+    return obtener_explicacion_grafica('bar-chart-3', selected_date)
+@app.callback(
+    Output('explicacion-bar-chart-4', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_4(selected_date):
+    return obtener_explicacion_grafica('bar-chart-4', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-5', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_5(selected_date):
+    return obtener_explicacion_grafica('bar-chart-5', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-6', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_6(selected_date):
+    return obtener_explicacion_grafica('bar-chart-6', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-7', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_7(selected_date):
+    return obtener_explicacion_grafica('bar-chart-7', selected_date)
 
 app.layout = dbc.Container([
     navbar,
     html.Br(),
     html.Br(),
+
+    # Filas para los totales de ID
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -210,48 +282,73 @@ app.layout = dbc.Container([
         ], width=4),
     ]),
     html.Br(),
+
+    html.H2("Reporte de Cobertura", className="text-center"),
+
+    # Tabla de datos
     dbc.Row([
-        dbc.Col([
+        dbc.Col(html.Div(id='table-container')),
+    ]),
+    html.Br(),
+
+    # Selector de fecha
+    dbc.Row([
+        dbc.Col(html.Div([
             html.Label("Seleccionar Fecha:   "),
             dcc.DatePickerSingle(
                 id='date-picker',
                 date=cobertura_por_fecha['Date'].iloc[0],
                 display_format='YYYY-MM-DD'
             ),
-        ]),
+        ])),
     ]),
     html.Br(),
+
+    # Gráficos y explicaciones
     dbc.Row([
-        dbc.Col(html.Div(id='table-container')),
-    ]),
+        dbc.Col([
+            dcc.Graph(id='bar-chart'),
+            html.Div(id='explicacion-bar-chart', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-2'),
+            html.Div(id='explicacion-bar-chart-2', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+    ], style={'margin-bottom': '20px'}),
     html.Br(),
+
     dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart')),
-    ]),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-3'),
+            html.Div(id='explicacion-bar-chart-3', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-4'),
+            html.Div(id='explicacion-bar-chart-4', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+    ], style={'margin-bottom': '20px'}),
     html.Br(),
+
     dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-2')),
-    ]),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-5'),
+            html.Div(id='explicacion-bar-chart-5', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-6'),
+            html.Div(id='explicacion-bar-chart-6', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+    ], style={'margin-bottom': '20px'}),
     html.Br(),
+
     dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-3')),
-    ]),
+        dbc.Col([
+            dcc.Graph(id='bar-chart-7'),
+            html.Div(id='explicacion-bar-chart-7', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+        ], style={'list-style-type': 'circle', 'text-align': 'center'}),
+    ], style={'margin-bottom': '20px'}),
     html.Br(),
-    dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-4')),
-    ]),
-    html.Br(),
-    dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-5')),
-    ]),
-    html.Br(),
-    dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-6')),
-    ]),
-    html.Br(),
-    dbc.Row([
-        dbc.Col(dcc.Graph(id='bar-chart-7')),
-    ]),
+
 ], fluid=True)
 
 # Callback para actualizar los totales de Status ID, Invalid ID y No ID
