@@ -12,7 +12,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # Cargar los datos
-df = pd.read_csv('update_report.csv')
+df = pd.read_csv('update_data.csv')
 df['Date'] = pd.to_datetime(df['Date'])
 # Calcular cobertura por fecha
 cobertura_por_fecha = (
