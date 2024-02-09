@@ -1,8 +1,8 @@
-dash==2.6.0
+dash
 pandas
 gunicorn
 folium
-plotly
 dash_bootstrap_components
 geopandas
+gunicorn 
 dash_leaflet
