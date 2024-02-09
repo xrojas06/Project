@@ -1,9 +1,8 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc
+from dash import html, dcc, Dash
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
-import dash
 import plotly.express as px
 import dash_leaflet as dl
 import geopandas as gpd
@@ -36,7 +35,7 @@ cobertura_fecha_especifica = pd.merge(cobertura_por_fecha_1, df_filter, on='Desc
 
 
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 
