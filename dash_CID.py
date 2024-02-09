@@ -105,7 +105,7 @@ def create_bar_chart_id_pos(selected_date):
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de ID por Pos',
+    fig.update_layout(title='Cantidad de ID por POS',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad'))
 
@@ -126,7 +126,7 @@ def create_bar_chart_noid_pos(selected_date):
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de No ID por Pos',
+    fig.update_layout(title='Cantidad de No ID por POS',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad' ))
 
