@@ -37,7 +37,7 @@ cobertura_fecha_especifica = pd.merge(cobertura_por_fecha_1, df_filter, on='Desc
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
+server = app.server
 
 
 navbar = dbc.NavbarSimple(
