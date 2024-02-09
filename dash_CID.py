@@ -8,6 +8,9 @@ import dash_leaflet as dl
 import geopandas as gpd
 import folium
 
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
+
 # Cargar los datos
 df = pd.read_csv('../data/update_report.csv')
 df['Date'] = pd.to_datetime(df['Date'])
@@ -35,8 +38,7 @@ cobertura_fecha_especifica = pd.merge(cobertura_por_fecha_1, df_filter, on='Desc
 
 
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
+
 
 
 navbar = dbc.NavbarSimple(
