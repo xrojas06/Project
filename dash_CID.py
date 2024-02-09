@@ -105,7 +105,7 @@ def create_bar_chart_id_pos(selected_date):
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de ID',
+    fig.update_layout(title='Cantidad de ID por Pos',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad'))
 
@@ -126,7 +126,7 @@ def create_bar_chart_noid_pos(selected_date):
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de No ID',
+    fig.update_layout(title='Cantidad de No ID por Pos',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad' ))
 
@@ -197,7 +197,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
     elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-08':
         return 'Los datos no válidos del 8 de febrero fueron el 1% del total de los tickets'
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-08':
-        return 'El 08 de febrero únicamente las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
+        return 'Las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-07':
         return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Además hubo un aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-07':
@@ -241,10 +241,21 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Total Status ID", className="card-title"),
-                    html.H3(id="total-status-id", className="card-text")
+                    html.H5("Total  Tickets", className="card-title"),
+                    html.H3(id="total-ids", className="card-text")
                 ])
             ], color="success", inverse=True)
+        ])
+    ]),
+    html.Br(),
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Total  ID", className="card-title"),
+                    html.H3(id="total-status-id", className="card-text")
+                ])
+            ], color="dodgerblue", inverse=True)
         ], width=4),
         dbc.Col([
             dbc.Card([
@@ -276,7 +287,7 @@ app.layout = dbc.Container([
         ])),
     ]),
     html.Br(),
-    html.H2("Reporte de Cobertura", className="text-center"),
+    html.H2("Reporte de Cobertura - Tiendas piloto", className="text-center"),
 
 
 
@@ -316,7 +327,7 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Graph(id='bar-chart-5'),
-            html.Div(id='explicacion-bar-chart-5', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+            html.Div(id='explicacion-bar-chart-5',style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
         ], style={'list-style-type': 'circle', 'text-align': 'center'}),
         dbc.Col([
             dcc.Graph(id='bar-chart-6'),
@@ -337,6 +348,15 @@ app.layout = dbc.Container([
 
 # Callback para actualizar los totales de Status ID, Invalid ID y No ID
 @app.callback(
+    [Output('total-ids', 'children')],
+    [Input('date-picker', 'date')]
+)
+
+def total_ids(selected_date):
+    total_ids = df['Transaction Id.'].nunique()
+    return [total_ids]
+
+@app.callback(
     [Output('total-status-id', 'children'),
      Output('total-invalid-id', 'children'),
      Output('total-no-id', 'children')],
@@ -346,6 +366,7 @@ def update_totals(selected_date):
     total_status_id = df[df['Status'] == 'ID']['Transaction Id.'].nunique()
     total_invalid_id = df[df['Status'] == 'Invalid ID']['Transaction Id.'].nunique()
     total_no_id = df[df['Status'] == 'No ID']['Transaction Id.'].nunique()
+    total_ids = df['Transaction Id.'].nunique()
 
     return total_status_id, total_invalid_id, total_no_id
 
@@ -473,6 +494,7 @@ def actualizar_explicacion_bar_chart_6(selected_date):
 )
 def actualizar_explicacion_bar_chart_7(selected_date):
     return obtener_explicacion_grafica('bar-chart-7', selected_date)
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
