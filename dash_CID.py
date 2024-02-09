@@ -241,7 +241,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Total  Tickets", className="card-title"),
+                    html.H5("Total Tickets acumulados desde el 6 de febrero", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
             ], color="success", inverse=True)
