@@ -181,10 +181,10 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
     # Aquí puedes poner la lógica para obtener el texto de explicación según el ID de la gráfica y la fecha seleccionada
     if id_grafica == 'bar-chart' and selected_date == '2024-02-08':
         return (
-                "Promedio de 27% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el"
-                + str(selected_date) + "." +
-                "Por otro lado hubo una disminución de 15 p.p. en el promedio de efectividad." +
-                "Y finalmente disminuyo 48 p.p. el promedio de cobertura para Bogotá - La Mariposa."
+                "Promedio de 27% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el "
+                 + "08/02/2024." +
+                " Por otro lado, hubo una disminución de 15 p.p. en el promedio de efectividad." +
+                " Y finalmente disminuyo 48 p.p. el promedio de cobertura para Bogotá - La Mariposa."
         )
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-08':
          return f"De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 53% de cobertura promedio efectiva"
@@ -198,6 +198,34 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'Los datos no válidos del 8 de febrero fueron el 1% del total de los tickets'
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-08':
         return 'El 08 de febrero únicamente las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-07':
+        return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Ádemas aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-07':
+        return "De las tiendas piloto, Bogotá – La Mariposa registró el mayor porcentaje de tickets con Customer ID con un 71% de cobertura promedio efectiva."
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-07':
+        return f"Cúcuta no registró tickets con Customer ID en el POS 1."
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-07':
+        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-07':
+        return 'El histograma señala la longitud de los ID’s de cliente. Se aprecia una distribución típica de 8 a 12 dígitos, que son consistentes con la cantidad de números en las cédulas o NIT’s. Sin embargo, se nota una proporción de ID’s con cantidades atípicas, lo que sugiere posibles errores de digitación.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-07':
+        return 'Los datos no válidos del 07 de febrero fueron el 1.3% del total de los tickets.'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-07':
+        return 'El 07 de febrero se detectó una cantidad importante de ID’s con más de un registro en varias tiendas, lo que podría ser un primer indicador de comportamiento de compra o fidelidad de los clientes. '
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-06':
+        return "Promedio de 25% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 06 de febrero 2024."
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-06':
+        return f"De las tiendas piloto, Bogotá – La Mariposa registró el mayor porcentaje de tickets con Customer ID con un 43% de cobertura promedio efectiva."
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-06':
+        return f"Bogotá Chico Norte no registró tickets con Customer ID en el POS 1. Y Cúcuta no registró tickets con Customer ID en el POS 3."
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-06':
+        return 'Bogotá Chico Norte no registró tickets sin Customer ID en el POS 1. Y Cúcuta no registró tickets sin Customer ID en el POS 3.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-06':
+        return 'El histograma señala la longitud de los ID’s de cliente. Se aprecia una distribución típica de 8 a 12 dígitos, que son consistentes con la cantidad de números en las cédulas o NIT’s. Sin embargo, se nota una proporción de ID’s con cantidades atípicas, lo que sugiere posibles errores de digitación.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-06':
+        return 'Los datos no válidos del 06 de febrero fueron el 0.5% del total de los tickets.'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-06':
+        return 'El 06 de febrero se detectó ID’s con más de un registro en varias tiendas, lo que podría ser un primer indicio del comportamiento de compra de los clientes. '
     # Agrega más casos según sea necesario para otras gráficas
 
 # Paso 2: Actualizar el texto de explicación de cada gráfica según la fecha seleccionada
@@ -282,15 +310,6 @@ app.layout = dbc.Container([
         ], width=4),
     ]),
     html.Br(),
-
-    html.H2("Reporte de Cobertura", className="text-center"),
-
-    # Tabla de datos
-    dbc.Row([
-        dbc.Col(html.Div(id='table-container')),
-    ]),
-    html.Br(),
-
     # Selector de fecha
     dbc.Row([
         dbc.Col(html.Div([
@@ -303,6 +322,17 @@ app.layout = dbc.Container([
         ])),
     ]),
     html.Br(),
+    html.H2("Reporte de Cobertura", className="text-center"),
+
+
+
+    # Tabla de datos
+    dbc.Row([
+        dbc.Col(html.Div(id='table-container')),
+    ]),
+    html.Br(),
+
+
 
     # Gráficos y explicaciones
     dbc.Row([
