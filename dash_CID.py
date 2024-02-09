@@ -199,7 +199,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-08':
         return 'El 08 de febrero únicamente las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-07':
-        return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Ádemas aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
+        return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Además hubo un aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-07':
         return "De las tiendas piloto, Bogotá – La Mariposa registró el mayor porcentaje de tickets con Customer ID con un 71% de cobertura promedio efectiva."
     elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-07':
@@ -212,6 +212,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'Los datos no válidos del 07 de febrero fueron el 1.3% del total de los tickets.'
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-07':
         return 'El 07 de febrero se detectó una cantidad importante de ID’s con más de un registro en varias tiendas, lo que podría ser un primer indicador de comportamiento de compra o fidelidad de los clientes. '
+
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-06':
         return "Promedio de 25% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 06 de febrero 2024."
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-06':
@@ -228,54 +229,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'El 06 de febrero se detectó ID’s con más de un registro en varias tiendas, lo que podría ser un primer indicio del comportamiento de compra de los clientes. '
     # Agrega más casos según sea necesario para otras gráficas
 
-# Paso 2: Actualizar el texto de explicación de cada gráfica según la fecha seleccionada
-@app.callback(
-    Output('explicacion-bar-chart', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart(selected_date):
-    return obtener_explicacion_grafica('bar-chart', selected_date)
 
-@app.callback(
-    Output('explicacion-bar-chart-2', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_2(selected_date):
-    return obtener_explicacion_grafica('bar-chart-2', selected_date)
-
-@app.callback(
-    Output('explicacion-bar-chart-3', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_3(selected_date):
-    return obtener_explicacion_grafica('bar-chart-3', selected_date)
-@app.callback(
-    Output('explicacion-bar-chart-4', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_4(selected_date):
-    return obtener_explicacion_grafica('bar-chart-4', selected_date)
-
-@app.callback(
-    Output('explicacion-bar-chart-5', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_5(selected_date):
-    return obtener_explicacion_grafica('bar-chart-5', selected_date)
-
-@app.callback(
-    Output('explicacion-bar-chart-6', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_6(selected_date):
-    return obtener_explicacion_grafica('bar-chart-6', selected_date)
-
-@app.callback(
-    Output('explicacion-bar-chart-7', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_7(selected_date):
-    return obtener_explicacion_grafica('bar-chart-7', selected_date)
 
 app.layout = dbc.Container([
     navbar,
@@ -470,7 +424,55 @@ def update_bar_chart_2(selected_date):
 def update_bar_chart_2(selected_date):
     return create_bar_duplicated(selected_date)
 
+# Paso 2: Actualizar el texto de explicación de cada gráfica según la fecha seleccionada
 
+@app.callback(
+    Output('explicacion-bar-chart', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart(selected_date):
+    return obtener_explicacion_grafica('bar-chart', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-2', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_2(selected_date):
+    return obtener_explicacion_grafica('bar-chart-2', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-3', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_3(selected_date):
+    return obtener_explicacion_grafica('bar-chart-3', selected_date)
+@app.callback(
+    Output('explicacion-bar-chart-4', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_4(selected_date):
+    return obtener_explicacion_grafica('bar-chart-4', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-5', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_5(selected_date):
+    return obtener_explicacion_grafica('bar-chart-5', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-6', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_6(selected_date):
+    return obtener_explicacion_grafica('bar-chart-6', selected_date)
+
+@app.callback(
+    Output('explicacion-bar-chart-7', 'children'),
+    [Input('date-picker', 'date')]
+)
+def actualizar_explicacion_bar_chart_7(selected_date):
+    return obtener_explicacion_grafica('bar-chart-7', selected_date)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
