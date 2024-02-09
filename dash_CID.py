@@ -98,10 +98,10 @@ def create_bar_chart_id_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
@@ -119,10 +119,10 @@ def create_bar_chart_noid_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
