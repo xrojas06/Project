@@ -292,7 +292,7 @@ app.layout = dbc.Container([
                     html.H5("Total Tickets Acumulados desde el 6 de febrero", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
-            ], color="dark", inverse=True)
+            ], color="success", inverse=True)
         ])
     ]),
     html.Br(),
@@ -303,7 +303,7 @@ app.layout = dbc.Container([
                     html.H5("Total  ID", className="card-title"),
                     html.H3(id="total-status-id", className="card-text")
                 ])
-            ], color="success", inverse=True)
+            ], color="dodgerblue", inverse=True)
         ], width=4),
         dbc.Col([
             dbc.Card([
