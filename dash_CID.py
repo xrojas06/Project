@@ -27,7 +27,8 @@ cobertura_por_fecha = (
 )
 
 cobertura_por_fecha['Coverage'] = cobertura_por_fecha['Tickets_with_ID'] / cobertura_por_fecha['Total_Tickets'] * 100
-cobertura_promedio = cobertura_por_fecha.groupby('Date')['Coverage'].mean().reset_index()
+cobertura_promedio = (cobertura_por_fecha.groupby('Date')['Tickets_with_ID'].sum()/cobertura_por_fecha.groupby('Date')['Total_Tickets'].sum() * 100).rename('Coverage').reset_index()
+
 
 nuevo_dataframe = cobertura_por_fecha.reset_index()
 nuevo_dataframe.rename(columns={'level_0': 'Date'}, inplace=True)
@@ -98,14 +99,14 @@ def create_bar_chart_id_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de ID por POS',
+    fig.update_layout(title='Cantidad de ID por Pos',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad'))
 
@@ -119,14 +120,14 @@ def create_bar_chart_noid_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de No ID por POS',
+    fig.update_layout(title='Cantidad de No ID por Pos',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad' ))
 
@@ -241,7 +242,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Total Tickets acumulados desde el 6 de febrero", className="card-title"),
+                    html.H5("Total  Tickets", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
             ], color="success", inverse=True)
@@ -381,6 +382,7 @@ def update_table(selected_date):
     cobertura_promedio_selected = cobertura_promedio[cobertura_promedio['Date'] == selected_date]['Coverage'].values[0]
 
     df_selected.loc[:, 'Coverage'] = (df_selected['Coverage'].round(0)).astype(int).astype(str) + '%'
+    #print(cobertura_promedio_selected, '%')
     cobertura_promedio_selected = str(int(round(cobertura_promedio_selected))) + '%'
 
     total_tickets_sum = df_selected['Total_Tickets'].sum()
