@@ -14,6 +14,7 @@ server = app.server
 # Cargar los datos
 df = pd.read_csv('update_data.csv')
 df['Date'] = pd.to_datetime(df['Date'])
+df['Date'] = df['Date'].dt.strftime("%Y-%m-%d")
 # Calcular cobertura por fecha
 cobertura_por_fecha = (
     df
@@ -99,14 +100,14 @@ def create_bar_chart_id_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de ID por Pos',
+    fig.update_layout(title='Cantidad de ID por POS',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad'))
 
@@ -120,14 +121,14 @@ def create_bar_chart_noid_pos(selected_date):
 
     # Crear el gráfico de barras
     fig = go.Figure(data=[
-        go.Bar(name='Pos 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
-        go.Bar(name='Pos 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
+        go.Bar(name='POS 1', x=grouped_data.index, y=grouped_data[1], text=grouped_data[1], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 2', x=grouped_data.index, y=grouped_data[2], text=grouped_data[2], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 3', x=grouped_data.index, y=grouped_data[3], text=grouped_data[3], textposition='auto', insidetextanchor='end'),
+        go.Bar(name='POS 4', x=grouped_data.index, y=grouped_data[4], text=grouped_data[4], textposition='auto', insidetextanchor='end')
     ])
 
     # Agregar título y etiquetas de los ejes
-    fig.update_layout(title='Cantidad de No ID por Pos',
+    fig.update_layout(title='Cantidad de No ID por POS',
                       xaxis=dict(title='Tienda'),
                       yaxis=dict(title='Cantidad' ))
 
@@ -199,6 +200,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'Los datos no válidos del 8 de febrero fueron el 1% del total de los tickets'
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-08':
         return 'Las tiendas de Bogotá Chico Norte Tres y Soacha Centro registraron tickets con ID más de una vez. '
+
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-07':
         return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Además hubo un aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-07':
@@ -228,8 +230,53 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'Los datos no válidos del 06 de febrero fueron el 0.5% del total de los tickets.'
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-06':
         return 'El 06 de febrero se detectó ID’s con más de un registro en varias tiendas, lo que podría ser un primer indicio del comportamiento de compra de los clientes. '
-    # Agrega más casos según sea necesario para otras gráficas
 
+
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-09':
+        return "Promedio de 41% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 9 de febrero de 2024, junto con un aumento de 15 p.p. en el promedio de efectividad. También se incrementó 36 p.p. en el promedio de cobertura para Bogotá - La Mariposa y 30 p.p. para Soacha Centro"
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-09':
+        return "De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 65% de cobertura promedio efectiva."
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-09':
+        return f"Neiva no registró tickets con Customer ID en el POS 3, al igual que Soacha no registró en el POS 2."
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-09':
+        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-09':
+        return 'Hay persistencia de ID’s con longitudes atípicas. Sin embargo, para el 09 de febrero no hay casos de errores con cantidad de dígitos menores 6.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-09':
+        return 'Los datos no válidos del 09 de febrero fueron el 1.4% del total de los tickets'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-09':
+        return 'El 09 de febrero la tienda de Cúcuta Avenida 5 no registró tickets con ID más de una vez'
+
+
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-10':
+        return 'Promedio de 36% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 10 de febrero de 2024. Se presentó una disminución de 5 p.p. en el promedio de efectividad. Sin embargo, Bogotá Chico Norte Tres subió 31 p.p. el promedio de cobertura'
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-10':
+        return 'De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 75% de cobertura promedio efectiva.'
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-10':
+        return 'Cúcuta no registró tickets con Customer ID en el POS 3, al igual que Soacha no registró tickets con Customer ID en el POS 2.'
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-10':
+        return 'Cúcuta no registró tickets sin Customer ID en el POS 3, de la misma forma que Soacha no registró tickets sin Customer ID en el POS 2.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-10':
+        return 'Hay persistencia de ID’s con longitudes atípicas. De nuevo se registran ID’s con cantidad de dígitos menores a 6.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-10':
+        return 'Los datos no válidos del 10 de febrero fueron el 3.6% del total de los tickets'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-10':
+        return 'El 10 de febrero la tienda de Cúcuta Avenida 5 no registró tickets con ID más de una vez.'
+
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-11':
+        return 'Promedio de 32% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 11 de febrero de 2024, junto con una disminución de 4 p.p. en el promedio de efectividad.'
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-11':
+        return 'De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 65% de cobertura promedio efectiva.'
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-11':
+        return 'Cúcuta no registró tickets con Customer ID en el POS 3.'
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-11':
+        return 'Cúcuta no registró tickets sin Customer ID en el POS 3.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-11':
+        return 'Hay persistencia de ID’s con longitudes atípicas. De nuevo se registran ID’s con cantidad de dígitos en todas las categorías.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-11':
+        return 'Los datos no válidos del 11 de febrero fueron el 1.6% del total de los tickets.'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-11':
+        return 'El 11 de febrero la tienda de Cúcuta Avenida 5 no registró tickets con ID más de una vez.'
 
 
 app.layout = dbc.Container([
@@ -242,10 +289,10 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Total  Tickets", className="card-title"),
+                    html.H5("Total Tickets Acumulados desde el 6 de febrero", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
-            ], color="success", inverse=True)
+            ], color="dark", inverse=True)
         ])
     ]),
     html.Br(),
@@ -256,7 +303,7 @@ app.layout = dbc.Container([
                     html.H5("Total  ID", className="card-title"),
                     html.H3(id="total-status-id", className="card-text")
                 ])
-            ], color="dodgerblue", inverse=True)
+            ], color="success", inverse=True)
         ], width=4),
         dbc.Col([
             dbc.Card([
