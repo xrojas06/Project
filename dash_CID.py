@@ -282,7 +282,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-12':
         return 'Promedio de 35% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 12 de febrero de 2024, junto con un aumento de 3 p.p. en el promedio de efectividad. Además, hubo un incremento 25 p.p. en el promedio de cobertura para Soacha Centro'
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-12':
-        return 'De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 66% de cobertura promedio efectiva
+        return 'De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 66% de cobertura promedio efectiva'
     elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-12':
         return 'Cúcuta no registró tickets con Customer ID en el POS 3; de igual manera que Soacha en el POS 2.'
     elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-12':
