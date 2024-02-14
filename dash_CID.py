@@ -295,7 +295,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'El 12 de febrero la tienda de Cúcuta Avenida 5 no registró tickets con ID más de una vez.'
 
     elif id_grafica == 'bar-chart' and selected_date == '2024-02-13':
-        return 'Promedio de 61% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 13 de febrero de 2024, se presentó un aumento de 27 p.p. en el promedio de efectividad. Finalmente, hubo un incremento 56 p.p. en el promedio de cobertura para Cúcuta Avenida 5
+        return 'Promedio de 61% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 13 de febrero de 2024, se presentó un aumento de 27 p.p. en el promedio de efectividad. Finalmente, hubo un incremento 56 p.p. en el promedio de cobertura para Cúcuta Avenida 5'
     elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-13':
         return 'De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 78% de cobertura promedio efectiva'
     elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-13':
