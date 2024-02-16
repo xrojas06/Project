@@ -324,6 +324,23 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
     elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-14':
         return 'El 14 de febrero, las cinco tiendas registraron ID’s de clientes con más de un registro.'
 
+
+
+    elif id_grafica == 'bar-chart' and selected_date == '2024-02-15':
+        return 'Promedio de 74% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 15 de febrero de 2024, se presentó un aumento de 14 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 36 p.p. en el promedio de cobertura para Bogotá Chico Norte Tres.'
+    elif id_grafica == 'bar-chart-2' and selected_date == '2024-02-15':
+        return 'De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 92% de cobertura promedio efectiva.'
+    elif id_grafica == 'bar-chart-3' and selected_date == '2024-02-15':
+        return 'Soacha Centro no registró tickets con Customer ID en el POS 3.'
+    elif id_grafica == 'bar-chart-4' and selected_date == '2024-02-15':
+        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS.'
+    elif id_grafica == 'bar-chart-5' and selected_date == '2024-02-15':
+        return 'Hay persistencia de ID’s con longitudes atípicas. Sin embargo, no hay ID’s con dígitos cuya cantidad es de 1, 2 y 4.'
+    elif id_grafica == 'bar-chart-6' and selected_date == '2024-02-15':
+        return 'Los datos no válidos del 15 de febrero fueron del 3.3% del total de los tickets.'
+    elif id_grafica == 'bar-chart-7' and selected_date == '2024-02-15':
+        return 'El 15 de febrero, las cinco tiendas registraron ID’s de clientes con más de un registro.'
+
 app.layout = dbc.Container([
     navbar,
     html.Br(),
