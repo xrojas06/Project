@@ -5,4 +5,5 @@ folium
 dash_bootstrap_components
 geopandas
 gunicorn 
+dash_daq
 dash_leaflet
