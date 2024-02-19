@@ -1,12 +1,10 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc, Dash
-from dash.dependencies import Input, Output
+from dash import html, dcc, Dash, Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
-import dash_leaflet as dl
-import geopandas as gpd
-import folium
+from update_data import customer_teradata_update
+import dash_daq as daq
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
