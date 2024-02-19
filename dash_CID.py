@@ -3,7 +3,6 @@ from dash import html, dcc, Dash, Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
-from update_data import customer_teradata_update
 import dash_daq as daq
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -480,6 +479,35 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return 'Soacha Centro no registró tickets con Customer ID en el POS 3.'
     elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-15':
         return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS.'
+
+
+
+    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-16':
+        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 16 de febrero de 2024, se presentó un aumento de 7 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 22 p.p. en el promedio de cobertura para Soacha Centro."
+    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-16':
+        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva."
+    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-16':
+        return "Soacha Centro no registró tickets con Customer ID en el POS 3."
+    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-07':
+        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS'
+
+    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-17':
+        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 17 de febrero de 2024, se presentó una disminución de 0.06 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 13 p.p. en el promedio de cobertura para Bogotá Chico Norte Tres."
+    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-17':
+        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva."
+    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-17':
+        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
+    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-17':
+        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS'
+
+    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-18':
+        return "Promedio de 79% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 18 de febrero de 2024, se presentó una disminución de 3 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 7 p.p. en el promedio de cobertura para Bogotá La Mariposa."
+    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-18':
+        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva"
+    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-18':
+        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS.."
+    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-18':
+        return 'Bogotá Chico Norte Tres no registró tickets sin Customer ID en el POS 1.'
 
 
 if __name__ == '__main__':
