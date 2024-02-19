@@ -488,7 +488,7 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva."
     elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-16':
         return "Soacha Centro no registró tickets con Customer ID en el POS 3."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-07':
+    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-16':
         return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS'
 
     elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-17':
