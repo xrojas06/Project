@@ -267,7 +267,7 @@ def update_table(selected_date):
     df_selected = pd.concat([df_selected, df_promedio], ignore_index=True)
     df_selected = df_selected.rename(columns={'ID_DIA': 'FECHA',
                                            'NOME_LOJA': 'TIENDA',
-                                           'TOTAL_TICKETS': 'TOTAL TICKETS',
+                                           'TOTAL_POS': 'TOTAL TICKETS',
                                            'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
                                            'COBERTURA_ID': 'COBERTURA'})
 
