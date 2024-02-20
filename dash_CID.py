@@ -42,10 +42,29 @@ app.layout = dbc.Container([
             dbc.Card([
                 dbc.CardBody([
                     html.H5("Cobertura Total de IDs hasta la fecha actual", className="card-title"),
-                    html.H3(id="total-coverage", className="card-text")
+                    html.H3(id="total-ids", className="card-text")
                 ])
             ], color="primary", inverse=True)
         ])
+    ]),
+    html.Br(),
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Total  ID", className="card-title"),
+                    html.H3(id="total-status-id", className="card-text")
+                ])
+            ], color="success", inverse=True)
+        ], width=6),
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Total No ID", className="card-title"),
+                    html.H3(id="total-no-id", className="card-text")
+                ])
+            ], color="danger", inverse=True)
+        ], width=6),
     ]),
     html.Br(),
 
@@ -90,7 +109,7 @@ app.layout = dbc.Container([
                 ]),
                 dbc.CardFooter(id="coverage-indicator", style={"color": "black"})
             ])
-        ], width=3),
+        ], ),
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
@@ -98,7 +117,7 @@ app.layout = dbc.Container([
                     dcc.Graph(id='grafico-cobertura-diaria')
                 ])
             ])
-        ], width=9)
+        ],)
     ]),
     html.Br(),
 
@@ -161,6 +180,29 @@ app.layout = dbc.Container([
     ]),html.Br(),
 ], fluid=True)
 
+
+
+@app.callback(
+    [Output('total-ids', 'children')],
+    [Input('date-picker', 'date')]
+)
+
+def total_ids(selected_date):
+    total_ids = df['TOTAL_ACUMULADO'].unique()
+    return [total_ids]
+
+
+@app.callback(
+    [Output('total-status-id', 'children'),
+     Output('total-no-id', 'children')],
+    [Input('date-picker', 'date')]
+)
+def update_totals(selected_date):
+    total_status_id = df['TOTAL_ID_ACUMULADO'].unique()
+    total_no_id = df['TOTAL_TRANSACCIONES_SIN_CLIENTE'].sum()
+
+
+    return total_status_id, total_no_id
 
 # Callback para actualizar el termómetro de la cobertura total de IDs
 @app.callback(
@@ -241,10 +283,14 @@ def update_coverage_graph(selected_date):
     cobertura = df['COBERTURA_DIARIA'].unique()
     cobertura = cobertura*100
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=fechas, y=cobertura, mode='lines',    fill='toself',
-                             fillcolor='rgba(249,112,21,0.2)',line_color='rgb(249,112,21)',text=cobertura,name='Cobertura Diaria'))
+    fig.add_trace(go.Scatter(x=fechas, y=cobertura, mode='lines+markers',
+                             fill='toself', fillcolor='rgba(249,112,21,0.2)', line_color='rgb(249,112,21)',
+                             text=cobertura,  # Agrega los datos sobre los puntos
+                             name='Cobertura Diaria'))
+    fig.update_traces(textposition="bottom right")
     fig.update_layout(title='Cobertura Diaria', xaxis_title='Fecha', yaxis_title='Cobertura')
     return fig
+
 
 
 def calcular_porcentajes_por_tienda(selected_date):
@@ -266,8 +312,8 @@ def update_percentage_graph(selected_date):
     porcentajes_sin_id = porcentajes_por_tienda['PORCENTAJE_SIN_ID'].values
 
     fig = go.Figure(data=[
-        go.Bar(name='Con ID', x=tiendas, y=porcentajes_con_id),
-        go.Bar(name='Sin ID', x=tiendas, y=porcentajes_sin_id)
+        go.Bar(name='Con ID', x=tiendas, y=porcentajes_con_id, textposition='auto'),
+        go.Bar(name='Sin ID', x=tiendas, y=porcentajes_sin_id, textposition='auto')
     ])
 
     fig.update_layout(barmode='group', title='Porcentaje de transacciones por tienda', xaxis_title='Tienda', yaxis_title='Porcentaje')
@@ -293,8 +339,8 @@ def update_graph(selected_date):
 
 
     fig = go.Figure(data=[
-        go.Bar(name='Con ID', x=tiendas, y=transacciones_con_id),
-        go.Bar(name='Sin ID', x=tiendas, y=transacciones_sin_id)
+        go.Bar(name='Con ID', x=tiendas, y=transacciones_con_id, textposition='auto'),
+        go.Bar(name='Sin ID', x=tiendas, y=transacciones_sin_id, textposition='auto')
     ])
 
     fig.update_layout(barmode='group', title='Transacciones por tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Transacciones')
@@ -324,7 +370,7 @@ def update_tickets_with_id_graph(selected_date):
     fig = go.Figure()
     for pos in range(1, 6):  # Suponiendo que tienes 5 POS
         pos_data = tickets_con_id[[f'TOTAL_TRANSACCIONES_CLIENTE_ID_00{pos}', f'TOTAL_TRANSACCIONES_CLIENTE_FE_00{pos}']]
-        fig.add_trace(go.Bar(x=tickets_con_id.index, y=pos_data.sum(axis=1), name=f'POS {pos}'))
+        fig.add_trace(go.Bar(x=tickets_con_id.index, y=pos_data.sum(axis=1), name=f'POS {pos}', textposition='auto'))
     fig.update_layout(barmode='stack', title='Tickets con ID por POS y por Tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
     return fig
 
@@ -344,7 +390,7 @@ def update_tickets_without_id_graph(selected_date):
     fig = go.Figure()
     for pos in range(1, 6):  # Suponiendo que tienes 5 POS
         pos_data = tickets_sin_id[f'TOTAL_TRANSACCIONES_SIN_CLIENTE_00{pos}']
-        fig.add_trace(go.Bar(x=tickets_sin_id.index, y=pos_data, name=f'POS {pos}'))
+        fig.add_trace(go.Bar(x=tickets_sin_id.index, y=pos_data, name=f'POS {pos}', textposition='auto'))
     fig.update_layout(barmode='stack', title='Tickets sin ID por POS y por Tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
     return fig
 
@@ -365,6 +411,7 @@ def update_coverage_graph_store(selected_date):
                                  text=cobertura_diaria[tienda].round(2), textposition='top center'))
     fig.update_layout(title='Cobertura Diaria por Tienda', xaxis_title='Fecha', yaxis_title='Cobertura')
     return fig
+
 
 def obtener_explicacion_grafica(id_grafica, selected_date):
     # Aquí puedes poner la lógica para obtener el texto de explicación según el ID de la gráfica y la fecha seleccionada
@@ -507,6 +554,15 @@ def obtener_explicacion_grafica(id_grafica, selected_date):
         return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
     elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-18':
         return 'Bogotá Chico Norte Tres no registró tickets sin Customer ID en el POS 3.'
+
+    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-19':
+        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 19 de febrero de 2024, se presentó un aumento de 2 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 19 p.p. en el promedio de cobertura para Soacha Centro."
+    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-19':
+        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 92% de cobertura promedio efectiva."
+    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-19':
+        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
+    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-19':
+        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS.'
 
 
 @app.callback(
