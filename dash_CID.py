@@ -255,7 +255,7 @@ def update_table(selected_date):
     # Crear una fila adicional con la cobertura promedio
     df_promedio = pd.DataFrame({'ID_DIA': [pd.to_datetime(selected_date).strftime('%Y-%m-%d')],  # Formatear la fecha para mostrar solo el día
                                 'NOME_LOJA': ['Promedio'],
-                                'TOTAL_TICKETS': [total_tickets_sum],
+                                'TOTAL_POS': [total_tickets_sum],
                                 'TOTAL_TICKETS_ID': [total_tickets_id_sum],
                                 'COBERTURA_ID': [str(round(cobertura_promedio_selected)) + '%']})
 
