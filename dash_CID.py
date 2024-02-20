@@ -254,7 +254,7 @@ def update_table(selected_date):
 
     # Crear una fila adicional con la cobertura promedio
     df_promedio = pd.DataFrame({'ID_DIA': [pd.to_datetime(selected_date).strftime('%Y-%m-%d')],  # Formatear la fecha para mostrar solo el día
-                                'NOME_LOJA': ['Promedio'],
+                                'NOME_LOJA': ['TOTAL TIENDAS PILOTO'],
                                 'TOTAL_POS': [total_tickets_sum],
                                 'TOTAL_TICKETS_ID': [total_tickets_id_sum],
                                 'COBERTURA_ID': [str(round(cobertura_promedio_selected)) + '%']})
@@ -297,7 +297,7 @@ def update_coverage_graph(selected_date):
                              text=cobertura,  # Agrega los datos sobre los puntos
                              name='Cobertura Diaria'))
     fig.update_traces(textposition="bottom right")
-    fig.update_layout(title='Cobertura Diaria', xaxis_title='Fecha', yaxis_title='Cobertura')
+    fig.update_layout( xaxis_title='Fecha', yaxis_title='Cobertura')
     return fig
 
 
@@ -325,7 +325,7 @@ def update_percentage_graph(selected_date):
         go.Bar(name='Sin ID', x=tiendas, y=porcentajes_sin_id, textposition='auto')
     ])
 
-    fig.update_layout(barmode='group', title='Porcentaje de transacciones por tienda', xaxis_title='Tienda', yaxis_title='Porcentaje')
+    fig.update_layout(barmode='group', xaxis_title='Tienda', yaxis_title='Porcentaje')
 
     return fig
 
@@ -352,7 +352,7 @@ def update_graph(selected_date):
         go.Bar(name='Sin ID', x=tiendas, y=transacciones_sin_id, textposition='auto')
     ])
 
-    fig.update_layout(barmode='group', title='Transacciones por tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Transacciones')
+    fig.update_layout(barmode='group', xaxis_title='Tienda', yaxis_title='Cantidad de Transacciones')
 
     return fig
 
@@ -380,7 +380,7 @@ def update_tickets_with_id_graph(selected_date):
     for pos in range(1, 6):  # Suponiendo que tienes 5 POS
         pos_data = tickets_con_id[[f'TOTAL_TRANSACCIONES_CLIENTE_ID_00{pos}', f'TOTAL_TRANSACCIONES_CLIENTE_FE_00{pos}']]
         fig.add_trace(go.Bar(x=tickets_con_id.index, y=pos_data.sum(axis=1), name=f'POS {pos}', textposition='auto'))
-    fig.update_layout(barmode='stack', title='Tickets con ID por POS y por Tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
+    fig.update_layout(barmode='stack', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
     return fig
 
 def obtener_datos_tickets_sin_id(selected_date):
@@ -400,7 +400,7 @@ def update_tickets_without_id_graph(selected_date):
     for pos in range(1, 6):  # Suponiendo que tienes 5 POS
         pos_data = tickets_sin_id[f'TOTAL_TRANSACCIONES_SIN_CLIENTE_00{pos}']
         fig.add_trace(go.Bar(x=tickets_sin_id.index, y=pos_data, name=f'POS {pos}', textposition='auto'))
-    fig.update_layout(barmode='stack', title='Tickets sin ID por POS y por Tienda', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
+    fig.update_layout(barmode='stack', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
     return fig
 
 def obtener_datos_cobertura_diaria_por_tienda():
@@ -418,7 +418,7 @@ def update_coverage_graph_store(selected_date):
     for tienda in cobertura_diaria.columns:
         fig.add_trace(go.Scatter(x=cobertura_diaria.index, y=cobertura_diaria[tienda]*100, mode='lines+markers', name=tienda,
                                  text=cobertura_diaria[tienda].round(2), textposition='top center'))
-    fig.update_layout(title='Cobertura Diaria por Tienda', xaxis_title='Fecha', yaxis_title='Cobertura')
+    fig.update_layout(xaxis_title='Fecha', yaxis_title='Cobertura')
     return fig
 
 
