@@ -10,8 +10,8 @@ server = app.server
 
 # Cargar los datos
 df = pd.read_csv('update_data.csv')
-temp_1 = df.groupby('ID_DIA')[['TOTAL_TRANSACCIONES_CLIENTE_ID', 'TOTAL_TRANSACCIONES_CLIENTE_FE']].sum()
-temp_1['Suma_Total'] = temp_1['TOTAL_TRANSACCIONES_CLIENTE_ID'] + temp_1['TOTAL_TRANSACCIONES_CLIENTE_FE']
+temp_1 = df.groupby('ID_DIA')[['TOTAL_TRANSACCIONES_CON_CLIENTE']].sum()
+temp_1['Suma_Total'] = temp_1['TOTAL_TRANSACCIONES_CON_CLIENTE']
 
 temp_2 = (df.groupby('ID_DIA')['TOTAL_POS'].sum()).rename('COBERTURA')
 cobertura_promedio = (temp_1['Suma_Total'] / temp_2 * 100).reset_index().rename(columns={'0': 'COBERTURA'})
@@ -81,7 +81,7 @@ app.layout = dbc.Container([
         ])),
     ]),
     html.Br(),
-    html.H2("Reporte de Cobertura - Tiendas piloto", className="text-center"),
+    html.H2("REPORTE DE COBERTURA CUSTOMER ID", className="text-center"),
 
     # Tabla de datos
     dbc.Row([
@@ -108,8 +108,8 @@ app.layout = dbc.Container([
                     )
                 ]),
                 dbc.CardFooter(id="coverage-indicator", style={"color": "black"})
-            ])
-        ], ),
+            ], id = 'card-gauge')
+        ], width = 3),
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
@@ -117,7 +117,7 @@ app.layout = dbc.Container([
                     dcc.Graph(id='grafico-cobertura-diaria')
                 ])
             ])
-        ],)
+        ], width = 9)
     ]),
     html.Br(),
 
@@ -136,50 +136,102 @@ app.layout = dbc.Container([
     # Layout
     dbc.Row([
         dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Transacciones por Tienda", className="card-title"),
-                    dcc.Graph(id='grafico-transacciones'),
-                    html.Div(id='explicacion-grafico-transacciones', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+            html.Div([
+                dbc.Card([
+                    dbc.CardBody([
+                        html.H5("Transacciones por Tienda", className="card-title"),
+                        dcc.Graph(id='grafico-transacciones'),
+                        html.Div(id='explicacion-grafico-transacciones', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
 
-                ])
+                    ])
+                ], id='card-grafico-transacciones')
             ])
         ], width=6),
         dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Porcentaje de Transacciones por Tienda", className="card-title"),
-                    dcc.Graph(id='grafico-porcentajes'),
-                    html.Div(id='explicacion-grafico-porcentajes', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
+            html.Div([
+                dbc.Card([
+                    dbc.CardBody([
+                        html.H5("Porcentaje de Transacciones por Tienda", className="card-title"),
+                        dcc.Graph(id='grafico-porcentajes'),
+                        html.Div(id='explicacion-grafico-porcentajes', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
 
-                ])
-            ])
+                    ])
+                ], id='card-grafico-porcentajes')
+            ] )
         ], width=6)
     ]),
     html.Br(),
     dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Tickets con ID por POS y por Tienda", className="card-title"),
-                    dcc.Graph(id='grafico-tickets-con-id'),
-                    html.Div(id='explicacion-grafico-tickets-con-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
-
-                ])
-            ])
-        ], width=6),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Tickets sin ID por POS y por Tienda", className="card-title"),
-                    dcc.Graph(id='grafico-tickets-sin-id'),
-                    html.Div(id='explicacion-grafico-tickets-sin-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
-                ])
-            ])
-        ], width=6)
+        dbc.Col(
+            html.Div(
+                dbc.Card([
+                    dbc.CardBody([
+                        html.H5("Tickets con ID por POS y por Tienda", className="card-title"),
+                        dcc.Graph(id='grafico-tickets-con-id'),
+                        html.Div(id='explicacion-grafico-tickets-con-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center'}),
+                    ])
+                ], id='card-con-id-wrapper'),
+                  # Añade un identificador único
+            ) ,
+            width=6
+        ),
+        dbc.Col(
+            html.Div(
+                dbc.Card(
+                    dbc.CardBody([
+                        html.H5("Tickets sin ID por POS y por Tienda", className="card-title"),
+                        dcc.Graph(id='grafico-tickets-sin-id'),
+                        html.Div(id='explicacion-grafico-tickets-sin-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center'}),
+                    ])
+        ,), id='card-sin-id-wrapper',
+            ),
+            width=6
+        )
     ]),html.Br(),
 ], fluid=True)
 
+
+@app.callback(
+    Output('card-grafico-transacciones', 'style'),
+    Output('card-grafico-porcentajes', 'style'),
+    Output('card-con-id-wrapper', 'style'),
+    Output('card-sin-id-wrapper', 'style'),
+    Output('card-gauge','style'),
+    Input('grafico-transacciones', 'figure'),
+    Input('grafico-porcentajes', 'figure'),
+    Input('grafico-tickets-con-id', 'figure'),
+    Input('grafico-tickets-sin-id', 'figure'),
+    Input('grafico-cobertura-diaria','figure'),
+    Input('explicacion-grafico-transacciones', 'children'),
+    Input('explicacion-grafico-porcentajes', 'children'),
+
+)
+def adjust_element_heights(fig_transacciones, fig_porcentajes, fig_con_id, fig_sin_id, fig_cobertura,exp_1, exp_2):
+    # Calcula la altura mínima deseada para las tarjetas
+    min_card_height = 500  # Puedes ajustar este valor según sea necesario
+    additional_text_height = 200  # Altura adicional para el texto dentro de las tarjetas
+    def calculate_max_text_height(*texts):
+        max_height = 0
+        for text in texts:
+         if text:
+            height = len(text)  # Longitud del texto como aproximación de altura
+            if height > max_height:
+                max_height = height
+            print(len(text))
+        return max_height
+
+    max_text_height = calculate_max_text_height(exp_1, exp_2)
+    print(max(10 * len(fig_porcentajes['data'][0]['x']) + max_text_height, 10 * len(fig_transacciones['data'][0]['x']) + max_text_height))
+    h1 = max(80 * len(fig_porcentajes['data'][0]['x']) + max_text_height, 80 * len(fig_transacciones['data'][0]['x']) + max_text_height)
+    h2 = 37*len(fig_cobertura['data'][0]['x'])
+    # Calcula la altura de las tarjetas basándote en el mínimo, la altura de los gráficos y el texto adicional
+    style_transacciones = {'height':h1}
+    style_porcentajes = {'height': h1}
+    style_cobertura = {'height':h2}
+    style_con_id = {'height': max(min_card_height, 10 * len(fig_con_id['data'][0]['x']))}
+    style_sin_id = {'height': max(min_card_height, 10 * len(fig_con_id['data'][0]['x']))}
+
+    return style_transacciones, style_porcentajes, style_con_id, style_sin_id, style_cobertura
 
 
 @app.callback(
@@ -233,8 +285,7 @@ def update_table(selected_date):
     df_selected = df[df['ID_DIA'] == selected_date]
 
     # Calcular el total de tickets con ID sumando las columnas TOTAL_TRANSACCIONES_CLIENTE_ID y TOTAL_TRANSACCIONES_CLIENTE_FE
-    df_selected['TOTAL_TICKETS_ID'] = df_selected['TOTAL_TRANSACCIONES_CLIENTE_ID'] + df_selected[
-        'TOTAL_TRANSACCIONES_CLIENTE_FE']
+    df_selected['TOTAL_TICKETS_ID'] = df_selected['TOTAL_TRANSACCIONES_CON_CLIENTE']
 
     # Seleccionar las columnas necesarias para la tabla
     df_selected = df_selected[['ID_DIA', 'NOME_LOJA', 'TOTAL_POS', 'TOTAL_TICKETS_ID', 'COBERTURA_ID']]
@@ -266,10 +317,10 @@ def update_table(selected_date):
     # Concatenar la fila promedio al DataFrame seleccionado
     df_selected = pd.concat([df_selected, df_promedio], ignore_index=True)
     df_selected = df_selected.rename(columns={'ID_DIA': 'FECHA',
-                                           'NOME_LOJA': 'TIENDA',
-                                           'TOTAL_POS': 'TOTAL TICKETS',
-                                           'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
-                                           'COBERTURA_ID': 'COBERTURA'})
+                                              'NOME_LOJA': 'TIENDA',
+                                              'TOTAL_POS': 'TOTAL TICKETS',
+                                              'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
+                                              'COBERTURA_ID': 'COBERTURA'})
 
     # Crear la tabla Dash Bootstrap Components
     table = dbc.Table.from_dataframe(
@@ -303,11 +354,11 @@ def update_coverage_graph(selected_date):
 
 
 def calcular_porcentajes_por_tienda(selected_date):
-        transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CLIENTE_FE','TOTAL_TRANSACCIONES_CLIENTE_ID','TOTAL_TRANSACCIONES_SIN_CLIENTE','TOTAL_POS']].sum()
-        transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CLIENTE_FE'] + transacciones_por_tienda['TOTAL_TRANSACCIONES_CLIENTE_ID']
-        transacciones_por_tienda['PORCENTAJE_CON_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_CLIENTE_ID'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
-        transacciones_por_tienda['PORCENTAJE_SIN_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_SIN_CLIENTE'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
-        return transacciones_por_tienda[['PORCENTAJE_CON_ID', 'PORCENTAJE_SIN_ID']]
+    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CON_CLIENTE','TOTAL_TRANSACCIONES_SIN_CLIENTE','TOTAL_POS']].sum()
+    transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE']
+    transacciones_por_tienda['PORCENTAJE_CON_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
+    transacciones_por_tienda['PORCENTAJE_SIN_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_SIN_CLIENTE'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
+    return transacciones_por_tienda[['PORCENTAJE_CON_ID', 'PORCENTAJE_SIN_ID']]
 
 
 @app.callback(
@@ -331,8 +382,8 @@ def update_percentage_graph(selected_date):
 
 
 def calcular_transacciones_por_tienda(selected_date):
-    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CLIENTE_FE','TOTAL_TRANSACCIONES_CLIENTE_ID','TOTAL_TRANSACCIONES_SIN_CLIENTE']].sum()
-    transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CLIENTE_FE'] + transacciones_por_tienda['TOTAL_TRANSACCIONES_CLIENTE_ID']
+    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CON_CLIENTE','TOTAL_TRANSACCIONES_SIN_CLIENTE']].sum()
+    transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE']
 
     return transacciones_por_tienda[['TOTAL_SUMA_ID','TOTAL_TRANSACCIONES_SIN_CLIENTE']]
 
@@ -358,15 +409,14 @@ def update_graph(selected_date):
 
 
 def obtener_datos_tickets_con_id(selected_date):
-    temp = 'TOTAL_TRANSACCIONES_CLIENTE_FE'
-    temp_2 = 'TOTAL_TRANSACCIONES_CLIENTE_ID'
+    temp = 'TOTAL_TRANSACCIONES_CON_CLIENTE'
     L = []
     for i in range(1,6):
-        L.extend([f'{temp}_00{i}', f'{temp_2}_00{i}'])
+        L.extend([f'{temp}_00{i}'])
 
     transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[L].sum()
     for i in range(1,6):
-        transacciones_por_tienda[f'TOTAL_SUMA_ID_00{i}'] = transacciones_por_tienda[f'TOTAL_TRANSACCIONES_CLIENTE_FE_00{i}'] + transacciones_por_tienda[f'TOTAL_TRANSACCIONES_CLIENTE_ID_00{i}']
+        transacciones_por_tienda[f'TOTAL_SUMA_ID_00{i}'] = transacciones_por_tienda[f'TOTAL_TRANSACCIONES_CON_CLIENTE_00{i}']
 
     return transacciones_por_tienda
 
@@ -378,7 +428,7 @@ def update_tickets_with_id_graph(selected_date):
     tickets_con_id = obtener_datos_tickets_con_id(selected_date)
     fig = go.Figure()
     for pos in range(1, 6):  # Suponiendo que tienes 5 POS
-        pos_data = tickets_con_id[[f'TOTAL_TRANSACCIONES_CLIENTE_ID_00{pos}', f'TOTAL_TRANSACCIONES_CLIENTE_FE_00{pos}']]
+        pos_data = tickets_con_id[[f'TOTAL_TRANSACCIONES_CON_CLIENTE_00{pos}']]
         fig.add_trace(go.Bar(x=tickets_con_id.index, y=pos_data.sum(axis=1), name=f'POS {pos}', textposition='auto'))
     fig.update_layout(barmode='stack', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
     return fig
