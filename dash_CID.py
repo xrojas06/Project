@@ -253,11 +253,11 @@ def update_table(selected_date):
     total_tickets_id_sum = df_selected['TOTAL_TICKETS_ID'].sum()
 
     # Crear una fila adicional con la cobertura promedio
-    df_promedio = pd.DataFrame({'ID_DIA': [pd.to_datetime(selected_date).strftime('%Y-%m-%d')],  # Formatear la fecha para mostrar solo el día
-                                'NOME_LOJA': ['Promedio'],
-                                'TOTAL_POS': [total_tickets_sum],
-                                'TOTAL_TICKETS_ID': [total_tickets_id_sum],
-                                'COBERTURA_ID': [str(round(cobertura_promedio_selected)) + '%']})
+    df_promedio = pd.DataFrame({'FECHA': [pd.to_datetime(selected_date).strftime('%Y-%m-%d')],  # Formatear la fecha para mostrar solo el día
+                                'TIENDA': ['Promedio'],
+                                'TOTAL TICKETS': [total_tickets_sum],
+                                'TOTAL TICKETS CON ID': [total_tickets_id_sum],
+                                'COBERTURA': [str(round(cobertura_promedio_selected)) + '%']})
 
     # Concatenar la fila promedio al DataFrame seleccionado
     df_selected = pd.concat([df_selected, df_promedio], ignore_index=True)
