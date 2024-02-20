@@ -183,7 +183,7 @@ app.layout = dbc.Container([
                         dcc.Graph(id='grafico-tickets-sin-id'),
                         html.Div(id='explicacion-grafico-tickets-sin-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center'}),
                     ])
-        ,), id='card-sin-id-wrapper',
+        , id='card-sin-id-wrapper'),
             ),
             width=6
         )
@@ -208,7 +208,7 @@ app.layout = dbc.Container([
 )
 def adjust_element_heights(fig_transacciones, fig_porcentajes, fig_con_id, fig_sin_id, fig_cobertura,exp_1, exp_2):
     # Calcula la altura mínima deseada para las tarjetas
-    min_card_height = 500  # Puedes ajustar este valor según sea necesario
+    min_card_height = 600  # Puedes ajustar este valor según sea necesario
     additional_text_height = 200  # Altura adicional para el texto dentro de las tarjetas
     def calculate_max_text_height(*texts):
         max_height = 0
