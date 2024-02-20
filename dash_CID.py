@@ -260,15 +260,16 @@ def update_table(selected_date):
                                 'COBERTURA_ID': [str(round(cobertura_promedio_selected)) + '%']})
 
     # Renombrar las columnas
-    df_promedio = df_promedio.rename(columns={'ID_DIA': 'FECHA',
-                                           'NOME_LOJA': 'TIENDA',
-                                           'TOTAL_TICKETS': 'TOTAL TICKETS',
-                                           'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
-                                           'COBERTURA_ID': 'COBERTURA'})
+
 
 
     # Concatenar la fila promedio al DataFrame seleccionado
     df_selected = pd.concat([df_selected, df_promedio], ignore_index=True)
+    df_selected = df_selected.rename(columns={'ID_DIA': 'FECHA',
+                                           'NOME_LOJA': 'TIENDA',
+                                           'TOTAL_TICKETS': 'TOTAL TICKETS',
+                                           'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
+                                           'COBERTURA_ID': 'COBERTURA'})
 
     # Crear la tabla Dash Bootstrap Components
     table = dbc.Table.from_dataframe(
