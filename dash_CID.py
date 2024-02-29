@@ -5,17 +5,18 @@ import plotly.graph_objs as go
 import plotly.express as px
 import dash_daq as daq
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
+from second_dashboard.update_data import customer_teradata_update
 
 # Cargar los datos
+
+
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 df = pd.read_csv('update_data.csv')
-temp_1 = df.groupby('ID_DIA')[['TOTAL_TRANSACCIONES_CON_CLIENTE']].sum()
-temp_1['Suma_Total'] = temp_1['TOTAL_TRANSACCIONES_CON_CLIENTE']
-
-temp_2 = (df.groupby('ID_DIA')['TOTAL_POS'].sum()).rename('COBERTURA')
-cobertura_promedio = (temp_1['Suma_Total'] / temp_2 * 100).reset_index().rename(columns={'0': 'COBERTURA'})
-
+print(df.info())
+zonas = df['ZONA_REGION'].unique()
+regiones = df['DESC_REGIAO'].unique()
+ciudades = df['DESC_CITY'].unique()
 
 navbar = dbc.NavbarSimple(
     children=[
@@ -29,19 +30,17 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-
-
 app.layout = dbc.Container([
     navbar,
     html.Br(),
     html.Br(),
 
-    # Filas para los totales de ID
+    html.H2("REPORTE DE COBERTURA CUSTOMER ID  PARA BDC ", className="text-center"),
     dbc.Row([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Cobertura Total de IDs hasta la fecha actual", className="card-title"),
+                    html.H5("Cobertura Total de IDs ", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
             ], color="primary", inverse=True)
@@ -69,28 +68,6 @@ app.layout = dbc.Container([
     html.Br(),
 
 
-    # Selector de fecha
-    dbc.Row([
-        dbc.Col(html.Div([
-            html.Label("Seleccionar Fecha:   "),
-            dcc.DatePickerSingle(
-                id='date-picker',
-                date=df['ID_DIA'].max(),  # Establecer la fecha predeterminada como la fecha más reciente en los datos
-                display_format='DD/MM/YYYY',  # Formato de visualización personalizado para mostrar solo el día, mes y año
-            ),
-        ])),
-    ]),
-    html.Br(),
-    html.H2("REPORTE DE COBERTURA CUSTOMER ID", className="text-center"),
-
-    # Tabla de datos
-    dbc.Row([
-        dbc.Col(html.Div(id='table-container')),
-    ]),
-    html.Br(),
-
-    # Termómetro para los totales de ID
-
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -110,133 +87,169 @@ app.layout = dbc.Container([
                 dbc.CardFooter(id="coverage-indicator", style={"color": "black"})
             ], id = 'card-gauge')
         ], width = 3),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Cobertura Diaria", className="card-title"),
-                    dcc.Graph(id='grafico-cobertura-diaria')
-                ])
-            ])
-        ], width = 9)
-    ]),
-    html.Br(),
-
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H5("Cobertura Diaria por Tienda", className="card-title"),
-                    dcc.Graph(id='grafico-cobertura-diaria-tiendas'),
-                ])
-            ])
-        ], width=12)
-    ]),
-    html.Br(),
-
-    # Layout
-    dbc.Row([
-        dbc.Col([
-            html.Div([
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H5("Transacciones por Tienda", className="card-title"),
-                        dcc.Graph(id='grafico-transacciones'),
-                        html.Div(id='explicacion-grafico-transacciones', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
-
-                    ])
-                ], id='card-grafico-transacciones')
-            ])
-        ], width=6),
-        dbc.Col([
-            html.Div([
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H5("Porcentaje de Transacciones por Tienda", className="card-title"),
-                        dcc.Graph(id='grafico-porcentajes'),
-                        html.Div(id='explicacion-grafico-porcentajes', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center', 'margin-top': '20px', 'margin-left': '20px', 'margin-right': '20px'}),
-
-                    ])
-                ], id='card-grafico-porcentajes')
-            ] )
-        ], width=6)
-    ]),
-    html.Br(),
-    dbc.Row([
-        dbc.Col(
-            html.Div(
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H5("Tickets con ID por POS y por Tienda", className="card-title"),
-                        dcc.Graph(id='grafico-tickets-con-id'),
-                        html.Div(id='explicacion-grafico-tickets-con-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center'}),
-                    ])
-                ], id='card-con-id-wrapper'),
-                  # Añade un identificador único
-            ) ,
-            width=6
-        ),
-        dbc.Col(
-            html.Div(
-                dbc.Card(
-                    dbc.CardBody([
-                        html.H5("Tickets sin ID por POS y por Tienda", className="card-title"),
-                        dcc.Graph(id='grafico-tickets-sin-id'),
-                        html.Div(id='explicacion-grafico-tickets-sin-id', style={'font-size': '16px', 'font-weight': 'bold', 'text-align': 'center'}),
-                    ])
-        , id='card-sin-id-wrapper'),
-            ),
-            width=6
-        )
+        dbc.Col(dcc.Graph(id='grafico-transacciones-con-id-zonal'), width=9),
     ]),html.Br(),
-], fluid=True)
+
+
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='grafico-transacciones-con-id-regional')),
+    ]),html.Br(),
+
+    # Selector de zona
+    dbc.Row([
+        dbc.Col(html.Div([
+            html.Label("Seleccionar Zona:"),
+            dcc.Dropdown(
+                id='dropdown-zona',
+                options=[{'label': zona, 'value': zona} for zona in zonas],
+                multi=False,
+                value=zonas[0]  # Seleccionar la primera zona por defecto
+            ),
+        ])),
+        dbc.Col(html.Div([
+            html.Label("Seleccionar Región:"),
+            dcc.Dropdown(
+                id='dropdown-region',
+                multi=False,
+            ),
+        ])),
+        dbc.Col(html.Div([
+            html.Label("Seleccionar Ciudad:"),
+            dcc.Dropdown(
+                id='dropdown-ciudad',
+                multi=False,
+            ),
+        ])),
+    ]),
+    html.Br(),
+
+
+    # Gráfico de transacciones con ID por tienda
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='grafico-transacciones-con-id')),
+    ]),
+])
+
 
 
 @app.callback(
-    Output('card-grafico-transacciones', 'style'),
-    Output('card-grafico-porcentajes', 'style'),
-    Output('card-con-id-wrapper', 'style'),
-    Output('card-sin-id-wrapper', 'style'),
-    Output('card-gauge','style'),
-    Input('grafico-transacciones', 'figure'),
-    Input('grafico-porcentajes', 'figure'),
-    Input('grafico-tickets-con-id', 'figure'),
-    Input('grafico-tickets-sin-id', 'figure'),
-    Input('grafico-cobertura-diaria','figure'),
-    Input('explicacion-grafico-transacciones', 'children'),
-    Input('explicacion-grafico-porcentajes', 'children'),
-
+    [Output('gauge', 'value'),
+     Output('coverage-indicator', 'className')],
+    [Input('dropdown-zona', 'value')]
 )
-def adjust_element_heights(fig_transacciones, fig_porcentajes, fig_con_id, fig_sin_id, fig_cobertura,exp_1, exp_2):
-    # Calcula la altura mínima deseada para las tarjetas
-    min_card_height = 600  # Puedes ajustar este valor según sea necesario
-    additional_text_height = 200  # Altura adicional para el texto dentro de las tarjetas
-    def calculate_max_text_height(*texts):
-        max_height = 0
-        for text in texts:
-         if text:
-            height = len(text)  # Longitud del texto como aproximación de altura
-            if height > max_height:
-                max_height = height
-            print(len(text))
-        return max_height
+def update_total_coverage(date):
+    cobertura_diaria = df['COBERTURA_TOTAL_ID']
+    total_coverage = (((cobertura_diaria)).mean())*100
+    if total_coverage <= 10:
+        indicator_style = {"color": "green"}
+    elif total_coverage <= 50:
+        indicator_style = {"color": "yellow"}
+    else:
+        indicator_style = {"color": "red"}
 
-    max_text_height = calculate_max_text_height(exp_1, exp_2)
-    print(max(10 * len(fig_porcentajes['data'][0]['x']) + max_text_height, 10 * len(fig_transacciones['data'][0]['x']) + max_text_height))
-    h1 = max(80 * len(fig_porcentajes['data'][0]['x']) + max_text_height, 80 * len(fig_transacciones['data'][0]['x']) + max_text_height)
-    h2 = 37*len(fig_cobertura['data'][0]['x'])
-    # Calcula la altura de las tarjetas basándote en el mínimo, la altura de los gráficos y el texto adicional
-    style_transacciones = {'height':h1}
-    style_porcentajes = {'height': h1}
-    style_cobertura = {'height':h2}
-    style_con_id = {'height': max(min_card_height, 10 * len(fig_con_id['data'][0]['x']))}
-    style_sin_id = {'height': max(min_card_height, 10 * len(fig_con_id['data'][0]['x']))}
+    return (int(float(total_coverage.item()) // 1)), indicator_style
 
-    return style_transacciones, style_porcentajes, style_con_id, style_sin_id, style_cobertura
+@app.callback(
+    Output('dropdown-region', 'options'),
+    [Input('dropdown-zona', 'value')]
+)
+def update_region_options(selected_zona):
+    regiones_en_zona = df[df['ZONA_REGION'] == selected_zona]['DESC_REGIAO'].unique()
+    return [{'label': region, 'value': region} for region in regiones_en_zona]
+
+
+@app.callback(
+    Output('dropdown-ciudad', 'options'),
+    [Input('dropdown-region', 'value')]
+)
+def update_ciudad_options(selected_region):
+    ciudades_en_region = df[df['DESC_REGIAO'] == selected_region]['DESC_CITY'].unique()
+    return [{'label': ciudad, 'value': ciudad} for ciudad in ciudades_en_region]
+
+
+@app.callback(
+    Output('grafico-transacciones-con-id', 'figure'),
+    [Input('dropdown-zona', 'value'),
+     Input('dropdown-region', 'value'),
+     Input('dropdown-ciudad', 'value')]
+)
+def update_transactions_with_id_graph(selected_zona, selected_region, selected_ciudad):
+    if selected_ciudad:
+        filtered_df = df[df['DESC_CITY'] == selected_ciudad]
+    elif selected_region:
+        filtered_df = df[df['DESC_REGIAO'] == selected_region]
+    elif selected_zona:
+        filtered_df = df[df['ZONA_REGION'] == selected_zona]
+    else:
+        filtered_df = df
+
+    transacciones_por_tienda = filtered_df.groupby('NOME_LOJA')['COBERTURA_ID'].mean()*100
+    transacciones_por_tienda = transacciones_por_tienda.reset_index()
+
+    fig = go.Figure(go.Bar(
+        x=transacciones_por_tienda['NOME_LOJA'],
+        y=transacciones_por_tienda['COBERTURA_ID'],
+        marker_color='royalblue'
+    ))
+
+    fig.update_layout(
+        title='Cobertura ID',
+        xaxis_title='Tienda',
+        yaxis_title='Cantidad de Transacciones con ID'
+    )
+
+    return fig
+
+@app.callback(
+    [Output('grafico-transacciones-con-id-zonal', 'figure')],
+    [Input('dropdown-zona', 'value')]
+)
+def update_transactions_with_id_graph_zonal(date):
+    cobertura_por_zona = df.groupby('ZONA_REGION')['COBERTURA_ID'].mean()*100
+    cobertura_por_zona = cobertura_por_zona.reset_index()
+
+    fig = go.Figure(go.Bar(
+        x=cobertura_por_zona['ZONA_REGION'],
+        y=cobertura_por_zona['COBERTURA_ID'],
+        marker_color='royalblue'
+    ))
+
+    fig.update_layout(
+        title='Cobertura con ID por Zona',
+        xaxis_title='Zona',
+        yaxis_title='Cobertura ID'
+    )
+
+    return [fig]
+
+
+@app.callback(
+    [Output('grafico-transacciones-con-id-regional', 'figure')],
+    [Input('dropdown-zona', 'value')]
+)
+def update_transactions_with_id_graph_zonal(date):
+    cobertura_por_zona = df.groupby('DESC_REGIAO')['COBERTURA_ID'].mean()*100
+    cobertura_por_zona = cobertura_por_zona.reset_index()
+
+    fig = go.Figure(go.Bar(
+        x=cobertura_por_zona['DESC_REGIAO'],
+        y=cobertura_por_zona['COBERTURA_ID'],
+        marker_color='royalblue'
+    ))
+
+    fig.update_layout(
+        title='Cobertura con ID por Región',
+        xaxis_title='Región',
+        yaxis_title='Cobertura ID'
+    )
+
+    return [fig]
+
 
 
 @app.callback(
     [Output('total-ids', 'children')],
-    [Input('date-picker', 'date')]
+    [Input('dropdown-zona', 'value')]
 )
 
 def total_ids(selected_date):
@@ -247,7 +260,7 @@ def total_ids(selected_date):
 @app.callback(
     [Output('total-status-id', 'children'),
      Output('total-no-id', 'children')],
-    [Input('date-picker', 'date')]
+    [Input('dropdown-zona', 'value')]
 )
 def update_totals(selected_date):
     total_status_id = df['TOTAL_ID_ACUMULADO'].unique()
@@ -256,401 +269,5 @@ def update_totals(selected_date):
 
     return total_status_id, total_no_id
 
-# Callback para actualizar el termómetro de la cobertura total de IDs
-@app.callback(
-    [Output('gauge', 'value'),
-     Output('coverage-indicator', 'className')],
-    [Input('date-picker', 'date')]
-)
-def update_total_coverage(selected_date):
-    cobertura_diaria = df[['ID_DIA','COBERTURA_DIARIA']]
-    total_coverage = ((cobertura_diaria[cobertura_diaria['ID_DIA'] <= selected_date]['COBERTURA_DIARIA'])*100).mean()
-    if total_coverage <= 10:
-        indicator_style = {"color": "green"}
-    elif total_coverage <= 50:
-        indicator_style = {"color": "yellow"}
-    else:
-        indicator_style = {"color": "red"}
-
-    return (int(float(total_coverage.item()) // 1)), indicator_style
-
-
-# Callback para actualizar la tabla
-@app.callback(
-    Output('table-container', 'children'),
-    [Input('date-picker', 'date')]
-)
-def update_table(selected_date):
-    # Filtrar el DataFrame df por el selected_date
-    df_selected = df[df['ID_DIA'] == selected_date]
-
-    # Calcular el total de tickets con ID sumando las columnas TOTAL_TRANSACCIONES_CLIENTE_ID y TOTAL_TRANSACCIONES_CLIENTE_FE
-    df_selected['TOTAL_TICKETS_ID'] = df_selected['TOTAL_TRANSACCIONES_CON_CLIENTE']
-
-    # Seleccionar las columnas necesarias para la tabla
-    df_selected = df_selected[['ID_DIA', 'NOME_LOJA', 'TOTAL_POS', 'TOTAL_TICKETS_ID', 'COBERTURA_ID']]
-
-    df_selected['ID_DIA'] = pd.to_datetime(df_selected['ID_DIA']).dt.strftime('%Y-%m-%d')
-    # Calcular la cobertura promedio para el día seleccionado
-    cobertura_promedio_selected = cobertura_promedio[cobertura_promedio['ID_DIA'] == selected_date][0].iloc[0]
-
-    # Convertir la cobertura a porcentaje y agregar el símbolo %
-    df_selected['COBERTURA_ID'] = (df_selected['COBERTURA_ID'] * 100).round().astype(int).astype(str) + '%'
-
-    # Calcular la suma total de tickets POS
-    total_tickets_sum = df_selected['TOTAL_POS'].sum()
-
-    # Calcular la suma total de tickets con ID
-    total_tickets_id_sum = df_selected['TOTAL_TICKETS_ID'].sum()
-
-    # Crear una fila adicional con la cobertura promedio
-    df_promedio = pd.DataFrame({'ID_DIA': [pd.to_datetime(selected_date).strftime('%Y-%m-%d')],  # Formatear la fecha para mostrar solo el día
-                                'NOME_LOJA': ['TOTAL TIENDAS PILOTO'],
-                                'TOTAL_POS': [total_tickets_sum],
-                                'TOTAL_TICKETS_ID': [total_tickets_id_sum],
-                                'COBERTURA_ID': [str(round(cobertura_promedio_selected)) + '%']})
-
-    # Renombrar las columnas
-
-
-
-    # Concatenar la fila promedio al DataFrame seleccionado
-    df_selected = pd.concat([df_selected, df_promedio], ignore_index=True)
-    df_selected = df_selected.rename(columns={'ID_DIA': 'FECHA',
-                                              'NOME_LOJA': 'TIENDA',
-                                              'TOTAL_POS': 'TOTAL TICKETS',
-                                              'TOTAL_TICKETS_ID': 'TOTAL TICKETS CON ID',
-                                              'COBERTURA_ID': 'COBERTURA'})
-
-    # Crear la tabla Dash Bootstrap Components
-    table = dbc.Table.from_dataframe(
-        df_selected,
-        striped=True,
-        bordered=True,
-        hover=True,
-        responsive=True
-    )
-    return table
-
-
-
-@app.callback(
-    Output('grafico-cobertura-diaria', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_coverage_graph(selected_date):
-    fechas = df['ID_DIA'].unique()
-    cobertura = df['COBERTURA_DIARIA'].unique()
-    cobertura = cobertura*100
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=fechas, y=cobertura, mode='lines+markers',
-                             fill='toself', fillcolor='rgba(249,112,21,0.2)', line_color='rgb(249,112,21)',
-                             text=cobertura,  # Agrega los datos sobre los puntos
-                             name='Cobertura Diaria'))
-    fig.update_traces(textposition="bottom right")
-    fig.update_layout( xaxis_title='Fecha', yaxis_title='Cobertura')
-    return fig
-
-
-
-def calcular_porcentajes_por_tienda(selected_date):
-    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CON_CLIENTE','TOTAL_TRANSACCIONES_SIN_CLIENTE','TOTAL_POS']].sum()
-    transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE']
-    transacciones_por_tienda['PORCENTAJE_CON_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
-    transacciones_por_tienda['PORCENTAJE_SIN_ID'] = (transacciones_por_tienda['TOTAL_TRANSACCIONES_SIN_CLIENTE'] / (transacciones_por_tienda['TOTAL_POS'])) * 100
-    return transacciones_por_tienda[['PORCENTAJE_CON_ID', 'PORCENTAJE_SIN_ID']]
-
-
-@app.callback(
-    Output('grafico-porcentajes', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_percentage_graph(selected_date):
-    porcentajes_por_tienda = calcular_porcentajes_por_tienda(selected_date)
-    tiendas = porcentajes_por_tienda.index
-    porcentajes_con_id = porcentajes_por_tienda['PORCENTAJE_CON_ID'].values
-    porcentajes_sin_id = porcentajes_por_tienda['PORCENTAJE_SIN_ID'].values
-
-    fig = go.Figure(data=[
-        go.Bar(name='Con ID', x=tiendas, y=porcentajes_con_id, textposition='auto'),
-        go.Bar(name='Sin ID', x=tiendas, y=porcentajes_sin_id, textposition='auto')
-    ])
-
-    fig.update_layout(barmode='group', xaxis_title='Tienda', yaxis_title='Porcentaje')
-
-    return fig
-
-
-def calcular_transacciones_por_tienda(selected_date):
-    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[['TOTAL_TRANSACCIONES_CON_CLIENTE','TOTAL_TRANSACCIONES_SIN_CLIENTE']].sum()
-    transacciones_por_tienda['TOTAL_SUMA_ID'] = transacciones_por_tienda['TOTAL_TRANSACCIONES_CON_CLIENTE']
-
-    return transacciones_por_tienda[['TOTAL_SUMA_ID','TOTAL_TRANSACCIONES_SIN_CLIENTE']]
-
-@app.callback(
-    Output('grafico-transacciones', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_graph(selected_date):
-    transacciones_por_tienda = calcular_transacciones_por_tienda(selected_date)
-    tiendas = transacciones_por_tienda.index
-    transacciones_con_id = transacciones_por_tienda['TOTAL_SUMA_ID'].values
-    transacciones_sin_id = transacciones_por_tienda['TOTAL_TRANSACCIONES_SIN_CLIENTE'].values
-
-
-    fig = go.Figure(data=[
-        go.Bar(name='Con ID', x=tiendas, y=transacciones_con_id, textposition='auto'),
-        go.Bar(name='Sin ID', x=tiendas, y=transacciones_sin_id, textposition='auto')
-    ])
-
-    fig.update_layout(barmode='group', xaxis_title='Tienda', yaxis_title='Cantidad de Transacciones')
-
-    return fig
-
-
-def obtener_datos_tickets_con_id(selected_date):
-    temp = 'TOTAL_TRANSACCIONES_CON_CLIENTE'
-    L = []
-    for i in range(1,6):
-        L.extend([f'{temp}_00{i}'])
-
-    transacciones_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[L].sum()
-    for i in range(1,6):
-        transacciones_por_tienda[f'TOTAL_SUMA_ID_00{i}'] = transacciones_por_tienda[f'TOTAL_TRANSACCIONES_CON_CLIENTE_00{i}']
-
-    return transacciones_por_tienda
-
-@app.callback(
-    Output('grafico-tickets-con-id', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_tickets_with_id_graph(selected_date):
-    tickets_con_id = obtener_datos_tickets_con_id(selected_date)
-    fig = go.Figure()
-    for pos in range(1, 6):  # Suponiendo que tienes 5 POS
-        pos_data = tickets_con_id[[f'TOTAL_TRANSACCIONES_CON_CLIENTE_00{pos}']]
-        fig.add_trace(go.Bar(x=tickets_con_id.index, y=pos_data.sum(axis=1), name=f'POS {pos}', textposition='auto'))
-    fig.update_layout(barmode='stack', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
-    return fig
-
-def obtener_datos_tickets_sin_id(selected_date):
-    temp = 'TOTAL_TRANSACCIONES_SIN_CLIENTE'
-    L = [f'{temp}_00{i}' for i in range(1, 6)]
-
-    tickets_sin_id_por_tienda = df[df['ID_DIA'] == selected_date].groupby('NOME_LOJA')[L].sum()
-    return tickets_sin_id_por_tienda
-
-@app.callback(
-    Output('grafico-tickets-sin-id', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_tickets_without_id_graph(selected_date):
-    tickets_sin_id = obtener_datos_tickets_sin_id(selected_date)
-    fig = go.Figure()
-    for pos in range(1, 6):  # Suponiendo que tienes 5 POS
-        pos_data = tickets_sin_id[f'TOTAL_TRANSACCIONES_SIN_CLIENTE_00{pos}']
-        fig.add_trace(go.Bar(x=tickets_sin_id.index, y=pos_data, name=f'POS {pos}', textposition='auto'))
-    fig.update_layout(barmode='stack', xaxis_title='Tienda', yaxis_title='Cantidad de Tickets')
-    return fig
-
-def obtener_datos_cobertura_diaria_por_tienda():
-    # Agrupa por día y tienda, y calcula la cobertura diaria promedio para cada tienda
-    cobertura_diaria = df.groupby(['ID_DIA', 'NOME_LOJA'])['COBERTURA_ID'].mean().unstack()
-    return cobertura_diaria
-
-@app.callback(
-    Output('grafico-cobertura-diaria-tiendas', 'figure'),
-    [Input('date-picker', 'date')]
-)
-def update_coverage_graph_store(selected_date):
-    cobertura_diaria = obtener_datos_cobertura_diaria_por_tienda()
-    fig = go.Figure()
-    for tienda in cobertura_diaria.columns:
-        fig.add_trace(go.Scatter(x=cobertura_diaria.index, y=cobertura_diaria[tienda]*100, mode='lines+markers', name=tienda,
-                                 text=cobertura_diaria[tienda].round(2), textposition='top center'))
-    fig.update_layout(xaxis_title='Fecha', yaxis_title='Cobertura')
-    return fig
-
-
-def obtener_explicacion_grafica(id_grafica, selected_date):
-    # Aquí puedes poner la lógica para obtener el texto de explicación según el ID de la gráfica y la fecha seleccionada
-    if id_grafica == 'grafico-transacciones' and selected_date == '2024-02-08':
-        return (
-                "Promedio de 27% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el "
-                + "08/02/2024." +
-                " Por otro lado, hubo una disminución de 15 p.p. en el promedio de efectividad." +
-                " Y finalmente disminuyo 48 p.p. el promedio de cobertura para Bogotá - La Mariposa."
-        )
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-08':
-        return f"De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 53% de cobertura promedio efectiva"
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-08':
-        return f"Cúcuta no registró tickets con Customer ID en el POS 1."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-08':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-07':
-        return "Promedio de 42% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 7 de febrero 2024. Además hubo un aumento de 17 p.p. en el promedio de la efectividad de la cobertura."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-07':
-        return "De las tiendas piloto, Bogotá – La Mariposa registró el mayor porcentaje de tickets con Customer ID con un 71% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-07':
-        return f"Cúcuta no registró tickets con Customer ID en el POS 1."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-07':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-06':
-        return "Promedio de 25% de efectividad de la cobertura en la solicitud de Customer ID en las tiendas piloto para el 06 de febrero 2024."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-06':
-        return f"De las tiendas piloto, Bogotá – La Mariposa registró el mayor porcentaje de tickets con Customer ID con un 43% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-06':
-        return f"Bogotá Chico Norte no registró tickets con Customer ID en el POS 1. Y Cúcuta no registró tickets con Customer ID en el POS 3."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-06':
-        return 'Bogotá Chico Norte no registró tickets sin Customer ID en el POS 1. Y Cúcuta no registró tickets sin Customer ID en el POS 3.'
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-09':
-        return "Promedio de 41% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 9 de febrero de 2024, junto con un aumento de 15 p.p. en el promedio de efectividad. También se incrementó 36 p.p. en el promedio de cobertura para Bogotá - La Mariposa y 30 p.p. para Soacha Centro"
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-09':
-        return "De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 65% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-09':
-        return f"Neiva no registró tickets con Customer ID en el POS 3, al igual que Soacha no registró en el POS 2."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-09':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 1.'
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-10':
-        return 'Promedio de 36% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 10 de febrero de 2024. Se presentó una disminución de 5 p.p. en el promedio de efectividad. Sin embargo, Bogotá Chico Norte Tres subió 31 p.p. el promedio de cobertura'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-10':
-        return 'De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 75% de cobertura promedio efectiva.'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-10':
-        return 'Cúcuta no registró tickets con Customer ID en el POS 3, al igual que Soacha no registró tickets con Customer ID en el POS 2.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-10':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 3, de la misma forma que Soacha no registró tickets sin Customer ID en el POS 2.'
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-11':
-        return 'Promedio de 32% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 11 de febrero de 2024, junto con una disminución de 4 p.p. en el promedio de efectividad.'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-11':
-        return 'De las tiendas piloto, Bogotá Chico Norte registró el mayor porcentaje de tickets con Customer ID con un 65% de cobertura promedio efectiva.'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-11':
-        return 'Cúcuta no registró tickets con Customer ID en el POS 3.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-11':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 3.'
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-12':
-        return 'Promedio de 35% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 12 de febrero de 2024, junto con un aumento de 3 p.p. en el promedio de efectividad. Además, hubo un incremento 25 p.p. en el promedio de cobertura para Soacha Centro'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-12':
-        return 'De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 66% de cobertura promedio efectiva'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-12':
-        return 'Cúcuta no registró tickets con Customer ID en el POS 3; de igual manera que Soacha en el POS 2.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-12':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 3; de igual manera que Soacha en el POS 2.'
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-13':
-        return 'Promedio de 61% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 13 de febrero de 2024, se presentó un aumento de 27 p.p. en el promedio de efectividad. Finalmente, hubo un incremento 56 p.p. en el promedio de cobertura para Cúcuta Avenida 5'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-13':
-        return 'De las tiendas piloto, Soacha Centro registró el mayor porcentaje de tickets con Customer ID con un 78% de cobertura promedio efectiva'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-13':
-        return 'Cúcuta no registró tickets con Customer ID en el POS 3.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-13':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 3'
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-14':
-        return 'Promedio de 60% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 14 de febrero de 2024, se presentó una disminución de 1 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 31 p.p. en el promedio de cobertura para Cúcuta Avenida 5.'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-14':
-        return 'De las tiendas piloto, Cúcuta registró el mayor porcentaje de tickets con Customer ID con un 88% de cobertura promedio efectiva.'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-14':
-        return 'Cúcuta no registró tickets con Customer ID en el POS 3.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-14':
-        return 'Cúcuta no registró tickets sin Customer ID en el POS 3'
-
-
-
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-15':
-        return 'Promedio de 74% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 15 de febrero de 2024, se presentó un aumento de 14 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 36 p.p. en el promedio de cobertura para Bogotá Chico Norte Tres.'
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-15':
-        return 'De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 92% de cobertura promedio efectiva.'
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-15':
-        return 'Soacha Centro no registró tickets con Customer ID en el POS 3.'
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-15':
-        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS.'
-
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-16':
-        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 16 de febrero de 2024, se presentó un aumento de 7 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 22 p.p. en el promedio de cobertura para Soacha Centro."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-16':
-        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-16':
-        return "Soacha Centro no registró tickets con Customer ID en el POS 3."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-16':
-        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS'
- 
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-17':
-        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 17 de febrero de 2024, se presentó una disminución de 0.06 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 13 p.p. en el promedio de cobertura para Bogotá Chico Norte Tres."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-17':
-        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-17':
-        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-17':
-        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS'
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-18':
-        return "Promedio de 79% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 18 de febrero de 2024, se presentó una disminución de 3 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 7 p.p. en el promedio de cobertura para Bogotá La Mariposa."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-18':
-        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 94% de cobertura promedio efectiva"
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-18':
-        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-18':
-        return 'Bogotá Chico Norte Tres no registró tickets sin Customer ID en el POS 3.'
-
-    elif id_grafica == 'grafico-transacciones' and selected_date == '2024-02-19':
-        return "Promedio de 81% de efectividad de la cobertura en la solicitud de Customer ID para las tiendas piloto el 19 de febrero de 2024, se presentó un aumento de 2 p.p. en el promedio de efectividad. Finalmente, hubo un incremento de 19 p.p. en el promedio de cobertura para Soacha Centro."
-    elif id_grafica == 'grafico-porcentajes' and selected_date == '2024-02-19':
-        return "De las tiendas piloto, Cúcuta Avenida 5 registró el mayor porcentaje de tickets con Customer ID con un 92% de cobertura promedio efectiva."
-    elif id_grafica == 'grafico-tickets-con-id' and selected_date == '2024-02-19':
-        return "Todas las tiendas registraron tickets con Customer ID en cada uno de los POS."
-    elif id_grafica == 'grafico-tickets-sin-id' and selected_date == '2024-02-19':
-        return 'Todas las tiendas registraron tickets sin Customer ID en cada uno de los POS.'
-
-
-@app.callback(
-    Output('explicacion-grafico-transacciones', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart(selected_date):
-    return obtener_explicacion_grafica('grafico-transacciones', selected_date)
-
-@app.callback(
-    Output('explicacion-grafico-porcentajes', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_2(selected_date):
-    return obtener_explicacion_grafica('grafico-porcentajes', selected_date)
-
-@app.callback(
-    Output('explicacion-grafico-tickets-con-id', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_3(selected_date):
-    return obtener_explicacion_grafica('grafico-tickets-con-id', selected_date)
-@app.callback(
-    Output('explicacion-grafico-tickets-sin-id', 'children'),
-    [Input('date-picker', 'date')]
-)
-def actualizar_explicacion_bar_chart_4(selected_date):
-    return obtener_explicacion_grafica('grafico-tickets-sin-id', selected_date)
-
 if __name__ == '__main__':
     app.run_server(debug=True)
-
