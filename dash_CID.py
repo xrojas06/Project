@@ -22,7 +22,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Reporte", href="#")),
         dbc.NavItem(dbc.NavLink("Acerca de", href="#")),
     ],
-    brand="Proyecto Customer ID",
+    brand="Customer ID",
     brand_href="#",
     color="dark",
     dark=True,
@@ -33,13 +33,24 @@ app.layout = dbc.Container([
     html.Br(),
     html.Br(),
 
-    html.H2("REPORTE DE COBERTURA CUSTOMER ID  PARA BDC ", className="text-center"),
+    html.H2("REPORTE DE COBERTURA (%) CUSTOMER ID  PARA BDC ", className="text-center"),
     html.Br(),
     dbc.Row([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Total de tickets ", className="card-title"),
+                    html.H5("Total de tiendas ", className="card-title"),
+                    html.H3(id="total-tiendas", className="card-text")
+                ])
+            ], color="gold", inverse=True)
+        ])
+    ]),
+    html.Br(),
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Total de Tickets ", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
             ], color="primary", inverse=True)
@@ -71,7 +82,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Cobertura Total de IDs", className="card-title"),
+                    html.H5("Cobertura (%) Total de IDs", className="card-title"),
                     daq.Gauge(
                         id='gauge',
                         color={"gradient":True,"ranges":{"red":[0,10],"yellow":[10,50],"green":[50,100]}},
@@ -184,17 +195,20 @@ def update_transactions_with_id_graph(selected_zona, selected_region, selected_c
 
     transacciones_por_tienda = filtered_df.groupby('NOME_LOJA')['COBERTURA_ID'].mean()*100
     transacciones_por_tienda = transacciones_por_tienda.reset_index()
-    colors = px.colors.qualitative.Plotly
+    transacciones_por_tienda = transacciones_por_tienda.sort_values(by='COBERTURA_ID')
     fig = go.Figure(go.Bar(
         x=transacciones_por_tienda['NOME_LOJA'],
         y=transacciones_por_tienda['COBERTURA_ID'],
-        marker_color='royalblue'
+        text=[f"{value:.0f}%" for value in transacciones_por_tienda['COBERTURA_ID']],
+        textposition='auto',
+        textangle=360,
+    marker_color='royalblue'
     ))
 
     fig.update_layout(
         title='Cobertura ID',
         xaxis_title='Tienda',
-        yaxis_title='Cantidad de Transacciones con ID'
+        yaxis_title='Cobertura (%) con ID'
     )
 
     return fig
@@ -206,18 +220,21 @@ def update_transactions_with_id_graph(selected_zona, selected_region, selected_c
 def update_transactions_with_id_graph_zonal(date):
     cobertura_por_zona = df.groupby('ZONA_REGION')['COBERTURA_ID'].mean()*100
     cobertura_por_zona = cobertura_por_zona.reset_index()
+    cobertura_por_zona = cobertura_por_zona.sort_values(by='COBERTURA_ID')
     colors = px.colors.qualitative.Plotly
 
     fig = go.Figure(go.Bar(
         x=cobertura_por_zona['ZONA_REGION'],
         y=cobertura_por_zona['COBERTURA_ID'],
-        marker_color=colors[:len(cobertura_por_zona)],
+        text=[f"{value:.0f}%" for value in cobertura_por_zona['COBERTURA_ID']],  # Display COBERTURA_ID on hover
+        textposition='auto',
+    marker_color=colors[:len(cobertura_por_zona)],
     ))
 
     fig.update_layout(
-        title='Cobertura con ID por Zona',
+        title='Cobertura (%) con ID por Zona',
         xaxis_title='Zona',
-        yaxis_title='Cobertura ID'
+        yaxis_title='Cobertura ID (%) '
     )
 
     return [fig]
@@ -230,19 +247,21 @@ def update_transactions_with_id_graph_zonal(date):
 def update_transactions_with_id_graph_zonal(date):
     cobertura_por_zona = df.groupby('DESC_REGIAO')['COBERTURA_ID'].mean()*100
     cobertura_por_zona = cobertura_por_zona.reset_index()
-
+    cobertura_por_zona = cobertura_por_zona.sort_values(by='COBERTURA_ID')
     colors = px.colors.qualitative.Plotly
 
     fig = go.Figure(go.Bar(
         x=cobertura_por_zona['DESC_REGIAO'],
         y=cobertura_por_zona['COBERTURA_ID'],
-        marker_color=colors[:len(cobertura_por_zona)],
+        text=[f"{value:.0f}%" for value in cobertura_por_zona['COBERTURA_ID']],  # Display COBERTURA_ID on hover
+        textposition='auto',
+    marker_color=colors[:len(cobertura_por_zona)],
     ))
 
     fig.update_layout(
-        title='Cobertura con ID por Región',
+        title='Cobertura (%) con ID por Región',
         xaxis_title='Región',
-        yaxis_title='Cobertura ID'
+        yaxis_title='Cobertura ID (%) '
     )
 
     return [fig]
@@ -270,6 +289,15 @@ def update_totals(selected_date):
 
 
     return total_status_id, total_no_id
+
+
+@app.callback(
+    [Output('total-tiendas', 'children')],
+    [Input('dropdown-zona', 'value')]
+)
+def update_total_tienda(selected_date):
+    total_tiendas = df['ID_LOJA'].nunique()
+    return [total_tiendas]
 
 if __name__ == '__main__':
     app.run_server(debug=True)
