@@ -39,7 +39,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Cobertura Total de IDs ", className="card-title"),
+                    html.H5("Total de tickets ", className="card-title"),
                     html.H3(id="total-ids", className="card-text")
                 ])
             ], color="primary", inverse=True)
