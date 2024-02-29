@@ -5,8 +5,6 @@ import plotly.graph_objs as go
 import plotly.express as px
 import dash_daq as daq
 
-from second_dashboard.update_data import customer_teradata_update
-
 # Cargar los datos
 
 
@@ -36,6 +34,7 @@ app.layout = dbc.Container([
     html.Br(),
 
     html.H2("REPORTE DE COBERTURA CUSTOMER ID  PARA BDC ", className="text-center"),
+    html.Br(),
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -72,7 +71,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H5("Cobertura Total de IDs hasta la fecha seleccionada", className="card-title"),
+                    html.H5("Cobertura Total de IDs", className="card-title"),
                     daq.Gauge(
                         id='gauge',
                         color={"gradient":True,"ranges":{"green":[0,10],"yellow":[10,50],"red":[50,100]}},
@@ -185,7 +184,7 @@ def update_transactions_with_id_graph(selected_zona, selected_region, selected_c
 
     transacciones_por_tienda = filtered_df.groupby('NOME_LOJA')['COBERTURA_ID'].mean()*100
     transacciones_por_tienda = transacciones_por_tienda.reset_index()
-
+    colors = px.colors.qualitative.Plotly
     fig = go.Figure(go.Bar(
         x=transacciones_por_tienda['NOME_LOJA'],
         y=transacciones_por_tienda['COBERTURA_ID'],
@@ -207,11 +206,12 @@ def update_transactions_with_id_graph(selected_zona, selected_region, selected_c
 def update_transactions_with_id_graph_zonal(date):
     cobertura_por_zona = df.groupby('ZONA_REGION')['COBERTURA_ID'].mean()*100
     cobertura_por_zona = cobertura_por_zona.reset_index()
+    colors = px.colors.qualitative.Plotly
 
     fig = go.Figure(go.Bar(
         x=cobertura_por_zona['ZONA_REGION'],
         y=cobertura_por_zona['COBERTURA_ID'],
-        marker_color='royalblue'
+        marker_color=colors[:len(cobertura_por_zona)],
     ))
 
     fig.update_layout(
@@ -231,10 +231,12 @@ def update_transactions_with_id_graph_zonal(date):
     cobertura_por_zona = df.groupby('DESC_REGIAO')['COBERTURA_ID'].mean()*100
     cobertura_por_zona = cobertura_por_zona.reset_index()
 
+    colors = px.colors.qualitative.Plotly
+
     fig = go.Figure(go.Bar(
         x=cobertura_por_zona['DESC_REGIAO'],
         y=cobertura_por_zona['COBERTURA_ID'],
-        marker_color='royalblue'
+        marker_color=colors[:len(cobertura_por_zona)],
     ))
 
     fig.update_layout(
