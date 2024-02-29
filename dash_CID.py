@@ -74,7 +74,7 @@ app.layout = dbc.Container([
                     html.H5("Cobertura Total de IDs", className="card-title"),
                     daq.Gauge(
                         id='gauge',
-                        color={"gradient":True,"ranges":{"green":[0,10],"yellow":[10,50],"red":[50,100]}},
+                        color={"gradient":True,"ranges":{"red":[0,10],"yellow":[10,50],"green":[50,100]}},
                         value=2,
                         label='Default',
                         max=100,
